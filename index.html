@@ -160,6 +160,138 @@
     }
     .reset-all-btn:hover { background: #ef444412; }
 
+    /* Share button in header */
+    .share-btn {
+      background: linear-gradient(135deg, #6366f1, #818cf8);
+      border: none; border-radius: 10px;
+      color: #fff; font-size: 12px; font-weight: 700;
+      padding: 8px 14px; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: opacity 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .share-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .share-btn:active { transform: scale(0.96); }
+
+    /* Modal overlay */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: #000000cc;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: #0f1120;
+      border: 1px solid #2d3158;
+      border-radius: 20px;
+      width: 100%; max-width: 420px;
+      padding: 24px;
+      transform: translateY(20px) scale(0.97);
+      transition: transform 0.25s cubic-bezier(.34,1.56,.64,1);
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-title { font-size: 18px; font-weight: 900; }
+    .modal-close {
+      background: var(--border); border: none; color: var(--muted);
+      width: 32px; height: 32px; border-radius: 99px;
+      font-size: 16px; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+    }
+
+    /* Score card preview */
+    .score-card-preview {
+      background: linear-gradient(135deg, #1a1040 0%, #0d1117 60%, #0c1424 100%);
+      border: 1px solid #312e8166;
+      border-radius: 16px; padding: 20px;
+      margin-bottom: 16px; font-family: monospace;
+      position: relative; overflow: hidden;
+    }
+    .score-card-preview::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, #6366f120 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .sc-title { font-size: 14px; font-weight: 800; color: #818cf8; margin-bottom: 12px; letter-spacing: 0.5px; font-family: 'Inter', sans-serif; }
+    .sc-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #ffffff08; font-family: 'Inter', sans-serif; }
+    .sc-row:last-of-type { border-bottom: none; }
+    .sc-subject { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .sc-score-val { font-size: 13px; font-weight: 700; }
+    .sc-total-row { margin-top: 12px; padding-top: 12px; border-top: 1px solid #ffffff18; display: flex; justify-content: space-between; align-items: center; font-family: 'Inter', sans-serif; }
+    .sc-total-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+    .sc-total-val { font-size: 22px; font-weight: 900; color: #c7d2fe; }
+    .sc-bar-mini { height: 4px; border-radius: 99px; background: #1e2538; margin-top: 10px; overflow: hidden; }
+    .sc-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #6366f1, #818cf8); }
+    .sc-footer { font-size: 10px; color: var(--dim); text-align: center; margin-top: 12px; font-family: 'Inter', sans-serif; }
+
+    /* Copy text area */
+    .copy-text-area {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px;
+      font-size: 12px; font-family: monospace; line-height: 1.7;
+      color: #94a3b8; white-space: pre; overflow-x: auto;
+      margin-bottom: 12px; user-select: all;
+    }
+
+    .copy-btn {
+      width: 100%; background: linear-gradient(135deg, #6366f1, #818cf8);
+      border: none; border-radius: 12px; color: #fff;
+      font-size: 14px; font-weight: 800; padding: 14px;
+      cursor: pointer; transition: opacity 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .copy-btn:hover { opacity: 0.9; }
+    .copy-btn.copied { background: linear-gradient(135deg, #22c55e, #16a34a); }
+
+    .share-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .share-option-btn {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px; cursor: pointer;
+      font-size: 12px; font-weight: 600; color: var(--muted);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .share-option-btn:hover { background: var(--border); color: var(--text); }
+
+    /* Read-only banner */
+    .readonly-banner {
+      background: linear-gradient(135deg, #1a1040, #0d1117);
+      border: 1px solid #6366f155;
+      border-radius: 14px; padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .readonly-badge {
+      font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+      background: #6366f122; color: #818cf8;
+      border: 1px solid #6366f144; border-radius: 99px;
+      padding: 3px 10px; white-space: nowrap;
+    }
+    .readonly-text { font-size: 13px; color: var(--muted); }
+    .readonly-own-btn {
+      background: #6366f1; border: none; border-radius: 8px;
+      color: #fff; font-size: 11px; font-weight: 700;
+      padding: 7px 12px; cursor: pointer; white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+    .readonly-own-btn:hover { opacity: 0.85; }
+
+    /* Share link copy box */
+    .share-link-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 14px;
+      font-size: 11px; font-family: monospace; color: #818cf8;
+      word-break: break-all; margin-bottom: 10px;
+      cursor: pointer; transition: border-color 0.15s;
+    }
+    .share-link-box:hover { border-color: #6366f1; }
+
     /* ── SUBJECT PAGE ── */
     .subj-header {
       display: flex; justify-content: space-between; align-items: center;
@@ -241,16 +373,66 @@
     <div class="header-title">📊 Exam Tracker</div>
     <div class="header-score">Combined: <span id="header-combined">0</span> / 1250</div>
   </div>
-  <div style="text-align:right">
-    <div style="font-size:11px;color:var(--muted)" id="header-progress">0/250 questions</div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="text-align:right">
+      <div style="font-size:11px;color:var(--muted)" id="header-progress">0/250 questions</div>
+    </div>
+    <button class="share-btn" onclick="openShareModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Share
+    </button>
   </div>
 </header>
+
+<!-- Share Modal -->
+<div class="modal-overlay" id="share-modal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📤 Share Your Score</div>
+      <button class="modal-close" onclick="closeShareModal()">✕</button>
+    </div>
+    <div class="score-card-preview" id="score-card-preview"></div>
+    <div style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Copy as text</div>
+    <div class="copy-text-area" id="share-text-area"></div>
+    <button class="copy-btn" id="copy-btn" onclick="copyScoreText()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy to Clipboard
+    </button>
+    <div class="share-options">
+      <button class="share-option-btn" onclick="shareWhatsApp()">
+        <span style="font-size:16px">💬</span> WhatsApp
+      </button>
+      <button class="share-option-btn" onclick="shareTwitter()">
+        <span style="font-size:16px">🐦</span> Twitter / X
+      </button>
+    </div>
+
+    <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
+      <div style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🔗 Share as a link</div>
+      <div style="font-size:12px;color:var(--dim);margin-bottom:10px">Anyone who opens this link will see your scores as a read-only snapshot.</div>
+      <div class="share-link-box" id="share-link-preview" onclick="copyShareLink()">Generating link…</div>
+      <button class="copy-btn" id="copy-link-btn" onclick="copyShareLink()" style="background:linear-gradient(135deg,#0f766e,#14b8a6)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Copy Share Link
+      </button>
+    </div>
+  </div>
+</div>
 
 <nav id="nav"></nav>
 
 <main>
   <!-- OVERVIEW PAGE -->
   <div class="page active" id="page-overview">
+
+    <!-- Read-only banner (shown when viewing someone else's shared link) -->
+    <div class="readonly-banner" id="readonly-banner" style="display:none">
+      <div>
+        <div class="readonly-badge">👁 READ-ONLY VIEW</div>
+        <div class="readonly-text" style="margin-top:4px">You're viewing someone's shared scores. Your own scores are unaffected.</div>
+      </div>
+      <button class="readonly-own-btn" onclick="goToOwnScores()">My Scores →</button>
+    </div>
     <div class="hero-card">
       <div class="hero-label">Combined Score</div>
       <div class="hero-score" id="ov-combined">0</div>
@@ -636,17 +818,234 @@ document.addEventListener('keydown', e => {
   }
 });
 
+// ── Share Modal ──
+function buildShareText() {
+  const totalScore = SUBJECTS.reduce((s, sub) => s + calc(state[sub.id]).score, 0);
+  const bars = ['░░░░░░░░░░','█░░░░░░░░░','██░░░░░░░░','███░░░░░░░','████░░░░░░','█████░░░░░','██████░░░░','███████░░░','████████░░','█████████░','██████████'];
+  const bar = (score, max) => bars[Math.round(Math.max(0,score)/max*10)];
+  const pct = (score, max) => Math.round(Math.max(0,score)/max*100);
+
+  let lines = [];
+  lines.push('╔══════════════════════════╗');
+  lines.push('║    📊 MY EXAM SCORES     ║');
+  lines.push('╠══════════════════════════╣');
+  SUBJECTS.forEach(s => {
+    const st = calc(state[s.id]);
+    const b = bar(st.score, 250);
+    const p = pct(st.score, 250);
+    const name = (s.label + '       ').slice(0,9);
+    const scoreStr = (st.score + '   ').slice(0,4);
+    lines.push(`║ ${s.emoji} ${name} ${b} ${p}%`);
+    lines.push(`║           Score: ${scoreStr}/250`);
+  });
+  lines.push('╠══════════════════════════╣');
+  lines.push(`║  🏆 COMBINED: ${totalScore}/1250`);
+  const overallPct = pct(totalScore, 1250);
+  lines.push(`║  ${bar(totalScore,1250)} ${overallPct}%`);
+  lines.push('╚══════════════════════════╝');
+  return lines.join('\n');
+}
+
+function buildShareCardHTML() {
+  const totalScore = SUBJECTS.reduce((s, sub) => s + calc(state[sub.id]).score, 0);
+  const totalMax = 1250;
+  const pct = Math.max(0, totalScore / totalMax * 100).toFixed(1);
+
+  const rows = SUBJECTS.map(s => {
+    const st = calc(state[s.id]);
+    const scorePct = Math.max(0, st.score) / 250 * 100;
+    return `
+      <div class="sc-row">
+        <div class="sc-subject">
+          <span>${s.emoji}</span>
+          <span>${s.label}</span>
+          ${state[s.id].length === 50 ? '<span style="font-size:9px;background:#22c55e18;color:#22c55e;padding:1px 5px;border-radius:99px;font-weight:700">DONE</span>' : `<span style="font-size:9px;color:var(--dim)">${state[s.id].length}/50</span>`}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:60px;height:4px;background:#1e2538;border-radius:99px;overflow:hidden">
+            <div style="width:${scorePct.toFixed(1)}%;height:100%;background:${s.color};border-radius:99px"></div>
+          </div>
+          <div class="sc-score-val" style="color:${s.color}">${st.score}<span style="font-size:9px;color:var(--dim);font-weight:400">/250</span></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="sc-title">📊 My Exam Scores</div>
+    ${rows}
+    <div class="sc-total-row">
+      <div class="sc-total-label">🏆 COMBINED TOTAL</div>
+      <div class="sc-total-val">${totalScore}<span style="font-size:13px;color:var(--dim);font-weight:500">/1250</span></div>
+    </div>
+    <div class="sc-bar-mini"><div class="sc-bar-fill" style="width:${pct}%"></div></div>
+    <div class="sc-footer">${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+  `;
+}
+
+function openShareModal() {
+  document.getElementById('score-card-preview').innerHTML = buildShareCardHTML();
+  document.getElementById('share-text-area').textContent = buildShareText();
+  document.getElementById('share-link-preview').textContent = encodeStateToURL();
+  const btn = document.getElementById('copy-btn');
+  btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy to Clipboard`;
+  btn.classList.remove('copied');
+  document.getElementById('share-modal').classList.add('open');
+}
+
+function closeShareModal() {
+  document.getElementById('share-modal').classList.remove('open');
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('share-modal')) closeShareModal();
+}
+
+function copyScoreText() {
+  const text = document.getElementById('share-text-area').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy to Clipboard`;
+      btn.classList.remove('copied');
+    }, 2500);
+  }).catch(() => {
+    // fallback
+    const el = document.getElementById('share-text-area');
+    const range = document.createRange();
+    range.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    showToast('Copied! ✓', '#22c55e');
+  });
+}
+
+function shareWhatsApp() {
+  const text = encodeURIComponent(buildShareText());
+  window.open(`https://wa.me/?text=${text}`, '_blank');
+}
+
+function shareTwitter() {
+  const totalScore = SUBJECTS.reduce((s, sub) => s + calc(state[sub.id]).score, 0);
+  const text = encodeURIComponent(`📊 My exam scores: ${totalScore}/1250 combined!\n\n${SUBJECTS.map(s=>`${s.emoji} ${s.label}: ${calc(state[s.id]).score}/250`).join('\n')}\n\n#ExamTracker`);
+  window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+}
+
+// ── Share Link (encode scores into URL) ──
+let isReadOnly = false;
+let readOnlyState = null;
+
+function encodeStateToURL() {
+  // Encode each subject's answers as a compact string: 1=C, 2=W, 3=S
+  const parts = SUBJECTS.map(s => {
+    return (state[s.id] || []).map(a => a === 1 ? 'C' : a === 2 ? 'W' : 'S').join('');
+  });
+  const encoded = btoa(parts.join('|'));
+  const url = window.location.href.split('?')[0].split('#')[0];
+  return `${url}?scores=${encoded}`;
+}
+
+function decodeURLToState(encoded) {
+  try {
+    const decoded = atob(encoded);
+    const parts = decoded.split('|');
+    const result = {};
+    SUBJECTS.forEach((s, i) => {
+      const part = parts[i] || '';
+      result[s.id] = part.split('').map(c => c === 'C' ? 1 : c === 'W' ? 2 : 3).filter(x => !isNaN(x));
+    });
+    return result;
+  } catch { return null; }
+}
+
+function buildShareLink() {
+  return encodeStateToURL();
+}
+
+function copyShareLink() {
+  const link = buildShareLink();
+  document.getElementById('share-link-preview').textContent = link;
+  navigator.clipboard.writeText(link).then(() => {
+    const btn = document.getElementById('copy-link-btn');
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Link Copied!`;
+    btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
+    showToast('Link copied! 🔗', '#14b8a6');
+    setTimeout(() => {
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Copy Share Link`;
+      btn.style.background = 'linear-gradient(135deg,#0f766e,#14b8a6)';
+    }, 2500);
+  }).catch(() => {
+    showToast('Link copied! 🔗', '#14b8a6');
+  });
+}
+
+function checkURLForSharedScores() {
+  const params = new URLSearchParams(window.location.search);
+  const encoded = params.get('scores');
+  if (!encoded) return false;
+  const decoded = decodeURLToState(encoded);
+  if (!decoded) return false;
+  readOnlyState = decoded;
+  isReadOnly = true;
+  return true;
+}
+
+function goToOwnScores() {
+  // Strip the ?scores= param and reload as normal tracker
+  window.location.href = window.location.href.split('?')[0].split('#')[0];
+}
+
+function getActiveState() {
+  return isReadOnly ? readOnlyState : state;
+}
+
+function goToOwnScores() {
+  window.location.href = window.location.href.split('?')[0];
+}
+
 // ── Helpers ──
 function setText(id, val) { const el=document.getElementById(id); if(el) el.textContent=val; }
 function setStyle(id, prop, val) { const el=document.getElementById(id); if(el) el.style[prop]=val; }
 
 // ── Init ──
-load();
+const sharedMode = checkURLForSharedScores();
+if (sharedMode) {
+  // Override state-reading for renders with readOnlyState
+  Object.defineProperty(window, 'state', {
+    get: () => readOnlyState,
+    set: () => {} // block writes in read-only mode
+  });
+  readOnlyState = readOnlyState; // keep reference
+  document.getElementById('readonly-banner').style.display = 'flex';
+  // Hide all input sections after pages are built
+} else {
+  load();
+}
 buildNav();
 buildSubjectPages();
+if (sharedMode) {
+  // In readonly mode, hide all input/action controls after build
+  SUBJECTS.forEach(s => {
+    const inputSec = document.getElementById(s.id+'-input-section');
+    const undoBtn  = document.getElementById(s.id+'-undo');
+    const resetBtns = document.querySelectorAll(`#page-${s.id} .action-btn`);
+    if (inputSec) inputSec.style.display = 'none';
+    if (undoBtn) undoBtn.style.display = 'none';
+    resetBtns.forEach(b => b.style.display = 'none');
+    const doneBanner = document.getElementById(s.id+'-done-banner');
+    if (doneBanner) { doneBanner.style.display = 'block'; doneBanner.textContent = '👁 Viewing shared scores (read-only)'; }
+  });
+}
 SUBJECTS.forEach(s => renderSubjectPage(s.id));
 renderOverview();
 updateHeader();
+// Pre-generate share link in modal
+setTimeout(() => {
+  const el = document.getElementById('share-link-preview');
+  if (el) el.textContent = encodeStateToURL();
+}, 100);
 </script>
 </body>
 </html>
