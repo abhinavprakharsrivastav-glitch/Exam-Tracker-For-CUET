@@ -408,13 +408,18 @@
     </div>
 
     <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
-      <div style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🔗 Share as a link</div>
-      <div style="font-size:12px;color:var(--dim);margin-bottom:10px">Anyone who opens this link will see your scores as a read-only snapshot.</div>
-      <div class="share-link-box" id="share-link-preview" onclick="copyShareLink()">Generating link…</div>
-      <button class="copy-btn" id="copy-link-btn" onclick="copyShareLink()" style="background:linear-gradient(135deg,#0f766e,#14b8a6)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        Copy Share Link
+      <div style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📋 Share as Score Code</div>
+      <div style="font-size:12px;color:var(--dim);margin-bottom:10px">Copy this code and send it to anyone. They can paste it into their own copy of this file to view your scores.</div>
+      <div class="share-link-box" id="share-link-preview" onclick="copyShareLink()" style="font-size:13px;letter-spacing:0.5px;word-break:break-all">Generating…</div>
+      <button class="copy-btn" id="copy-link-btn" onclick="copyShareLink()" style="background:linear-gradient(135deg,#0f766e,#14b8a6);margin-bottom:10px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Score Code
       </button>
+      <div style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;margin-top:4px">📥 Load Someone's Score Code</div>
+      <div style="display:flex;gap:8px">
+        <input id="load-code-input" placeholder="Paste score code here…" style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--text);font-family:monospace;outline:none" />
+        <button onclick="loadScoreCode()" style="background:#6366f1;border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:700;padding:10px 14px;cursor:pointer;white-space:nowrap">View →</button>
+      </div>
     </div>
   </div>
 </div>
@@ -885,7 +890,7 @@ function buildShareCardHTML() {
 function openShareModal() {
   document.getElementById('score-card-preview').innerHTML = buildShareCardHTML();
   document.getElementById('share-text-area').textContent = buildShareText();
-  document.getElementById('share-link-preview').textContent = encodeStateToURL();
+  document.getElementById('share-link-preview').textContent = encodeScoreCode();
   const btn = document.getElementById('copy-btn');
   btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy to Clipboard`;
   btn.classList.remove('copied');
@@ -936,13 +941,11 @@ function shareTwitter() {
 // ── Share Link (encode scores into URL) ──
 let isReadOnly = false;
 
-function encodeStateToURL() {
+function encodeScoreCode() {
   const parts = SUBJECTS.map(s =>
     (state[s.id] || []).map(a => a === 1 ? 'C' : a === 2 ? 'W' : 'S').join('')
   );
-  const encoded = btoa(unescape(encodeURIComponent(parts.join('|'))));
-  const url = window.location.href.split('?')[0].split('#')[0];
-  return `${url}?scores=${encoded}`;
+  return btoa(unescape(encodeURIComponent(parts.join('|'))));
 }
 
 function decodeURLToState(encoded) {
@@ -959,49 +962,29 @@ function decodeURLToState(encoded) {
 }
 
 function copyShareLink() {
-  const link = encodeStateToURL();
-  document.getElementById('share-link-preview').textContent = link;
-  navigator.clipboard.writeText(link).then(() => {
+  const code = encodeScoreCode();
+  document.getElementById('share-link-preview').textContent = code;
+  navigator.clipboard.writeText(code).then(() => {
     const btn = document.getElementById('copy-link-btn');
-    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Link Copied!`;
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Code Copied!`;
     btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
-    showToast('Link copied! 🔗', '#14b8a6');
+    showToast('Score code copied! 📋', '#14b8a6');
     setTimeout(() => {
-      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Copy Share Link`;
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Score Code`;
       btn.style.background = 'linear-gradient(135deg,#0f766e,#14b8a6)';
     }, 2500);
-  }).catch(() => { showToast('Link copied! 🔗', '#14b8a6'); });
+  }).catch(() => { showToast('Score code copied! 📋', '#14b8a6'); });
 }
 
-function goToOwnScores() {
-  window.location.href = window.location.href.split('?')[0].split('#')[0];
-}
-
-// ── Helpers ──
-function setText(id, val) { const el=document.getElementById(id); if(el) el.textContent=val; }
-function setStyle(id, prop, val) { const el=document.getElementById(id); if(el) el.style[prop]=val; }
-
-// ── Init ──
-// Check URL for shared scores FIRST, before anything else
-const params = new URLSearchParams(window.location.search);
-const sharedEncoded = params.get('scores');
-const sharedDecoded = sharedEncoded ? decodeURLToState(sharedEncoded) : null;
-
-if (sharedDecoded) {
-  // ✅ SHARED MODE: load the URL scores directly into state
+function loadScoreCode() {
+  const input = document.getElementById('load-code-input').value.trim();
+  if (!input) { showToast('Paste a score code first', '#ef4444'); return; }
+  const decoded = decodeURLToState(input);
+  if (!decoded) { showToast('Invalid code ✗', '#ef4444'); return; }
   isReadOnly = true;
-  SUBJECTS.forEach(s => { state[s.id] = sharedDecoded[s.id] || []; });
-  document.getElementById('readonly-banner').style.display = 'flex';
-} else {
-  // Normal mode: load from localStorage
-  load();
-}
-
-buildNav();
-buildSubjectPages();
-
-if (isReadOnly) {
-  // Hide all editing controls
+  SUBJECTS.forEach(s => { state[s.id] = decoded[s.id] || []; });
+  closeShareModal();
+  // Hide editing controls
   SUBJECTS.forEach(s => {
     const inputSec  = document.getElementById(s.id+'-input-section');
     const undoBtn   = document.getElementById(s.id+'-undo');
@@ -1010,22 +993,57 @@ if (isReadOnly) {
     if (inputSec)   inputSec.style.display = 'none';
     if (undoBtn)    undoBtn.style.display = 'none';
     if (actionRow)  actionRow.style.display = 'none';
-    if (doneBanner) {
-      doneBanner.style.display = 'block';
-      doneBanner.textContent = '👁 Viewing shared scores — read only';
-    }
+    if (doneBanner) { doneBanner.style.display = 'block'; doneBanner.textContent = '👁 Viewing shared scores — read only'; }
   });
-  // Hide share button in header (doesn't make sense in readonly mode)
+  document.getElementById('readonly-banner').style.display = 'flex';
   document.querySelector('.share-btn').style.display = 'none';
+  SUBJECTS.forEach(s => renderSubjectPage(s.id));
+  renderOverview();
+  updateHeader();
+  goTo('overview');
+  showToast('Scores loaded! 👁', '#6366f1');
 }
+
+function goToOwnScores() {
+  isReadOnly = false;
+  load();
+  SUBJECTS.forEach(s => {
+    const inputSec  = document.getElementById(s.id+'-input-section');
+    const undoBtn   = document.getElementById(s.id+'-undo');
+    const actionRow = document.querySelector(`#page-${s.id} .action-row`);
+    const doneBanner = document.getElementById(s.id+'-done-banner');
+    const done = state[s.id].length >= TOTAL_Q;
+    if (inputSec)   inputSec.style.display = done ? 'none' : 'block';
+    if (undoBtn)    { undoBtn.style.display = ''; undoBtn.disabled = state[s.id].length === 0; }
+    if (actionRow)  actionRow.style.display = '';
+    if (doneBanner) { doneBanner.style.display = done ? 'block' : 'none'; if(done) doneBanner.textContent = '🎉 All 50 questions completed!'; }
+  });
+  document.getElementById('readonly-banner').style.display = 'none';
+  document.querySelector('.share-btn').style.display = '';
+  SUBJECTS.forEach(s => renderSubjectPage(s.id));
+  renderOverview();
+  updateHeader();
+  goTo('overview');
+}
+
+// ── Helpers ──
+function setText(id, val) { const el=document.getElementById(id); if(el) el.textContent=val; }
+function setStyle(id, prop, val) { const el=document.getElementById(id); if(el) el.style[prop]=val; }
+
+// ── Init ──
+// Normal mode: load from localStorage
+load();
+
+buildNav();
+buildSubjectPages();
 
 SUBJECTS.forEach(s => renderSubjectPage(s.id));
 renderOverview();
 updateHeader();
 
-// Pre-fill share link in modal
+// Pre-fill share code in modal
 const shareLinkEl = document.getElementById('share-link-preview');
-if (shareLinkEl) shareLinkEl.textContent = encodeStateToURL();
+if (shareLinkEl) shareLinkEl.textContent = encodeScoreCode();
 </script>
 </body>
 </html>
