@@ -935,37 +935,31 @@ function shareTwitter() {
 
 // ── Share Link (encode scores into URL) ──
 let isReadOnly = false;
-let readOnlyState = null;
 
 function encodeStateToURL() {
-  // Encode each subject's answers as a compact string: 1=C, 2=W, 3=S
-  const parts = SUBJECTS.map(s => {
-    return (state[s.id] || []).map(a => a === 1 ? 'C' : a === 2 ? 'W' : 'S').join('');
-  });
-  const encoded = btoa(parts.join('|'));
+  const parts = SUBJECTS.map(s =>
+    (state[s.id] || []).map(a => a === 1 ? 'C' : a === 2 ? 'W' : 'S').join('')
+  );
+  const encoded = btoa(unescape(encodeURIComponent(parts.join('|'))));
   const url = window.location.href.split('?')[0].split('#')[0];
   return `${url}?scores=${encoded}`;
 }
 
 function decodeURLToState(encoded) {
   try {
-    const decoded = atob(encoded);
+    const decoded = decodeURIComponent(escape(atob(encoded)));
     const parts = decoded.split('|');
     const result = {};
     SUBJECTS.forEach((s, i) => {
       const part = parts[i] || '';
-      result[s.id] = part.split('').map(c => c === 'C' ? 1 : c === 'W' ? 2 : 3).filter(x => !isNaN(x));
+      result[s.id] = part.split('').map(c => c === 'C' ? 1 : c === 'W' ? 2 : 3);
     });
     return result;
   } catch { return null; }
 }
 
-function buildShareLink() {
-  return encodeStateToURL();
-}
-
 function copyShareLink() {
-  const link = buildShareLink();
+  const link = encodeStateToURL();
   document.getElementById('share-link-preview').textContent = link;
   navigator.clipboard.writeText(link).then(() => {
     const btn = document.getElementById('copy-link-btn');
@@ -976,33 +970,11 @@ function copyShareLink() {
       btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Copy Share Link`;
       btn.style.background = 'linear-gradient(135deg,#0f766e,#14b8a6)';
     }, 2500);
-  }).catch(() => {
-    showToast('Link copied! 🔗', '#14b8a6');
-  });
-}
-
-function checkURLForSharedScores() {
-  const params = new URLSearchParams(window.location.search);
-  const encoded = params.get('scores');
-  if (!encoded) return false;
-  const decoded = decodeURLToState(encoded);
-  if (!decoded) return false;
-  readOnlyState = decoded;
-  isReadOnly = true;
-  return true;
+  }).catch(() => { showToast('Link copied! 🔗', '#14b8a6'); });
 }
 
 function goToOwnScores() {
-  // Strip the ?scores= param and reload as normal tracker
   window.location.href = window.location.href.split('?')[0].split('#')[0];
-}
-
-function getActiveState() {
-  return isReadOnly ? readOnlyState : state;
-}
-
-function goToOwnScores() {
-  window.location.href = window.location.href.split('?')[0];
 }
 
 // ── Helpers ──
@@ -1010,42 +982,50 @@ function setText(id, val) { const el=document.getElementById(id); if(el) el.text
 function setStyle(id, prop, val) { const el=document.getElementById(id); if(el) el.style[prop]=val; }
 
 // ── Init ──
-const sharedMode = checkURLForSharedScores();
-if (sharedMode) {
-  // Override state-reading for renders with readOnlyState
-  Object.defineProperty(window, 'state', {
-    get: () => readOnlyState,
-    set: () => {} // block writes in read-only mode
-  });
-  readOnlyState = readOnlyState; // keep reference
+// Check URL for shared scores FIRST, before anything else
+const params = new URLSearchParams(window.location.search);
+const sharedEncoded = params.get('scores');
+const sharedDecoded = sharedEncoded ? decodeURLToState(sharedEncoded) : null;
+
+if (sharedDecoded) {
+  // ✅ SHARED MODE: load the URL scores directly into state
+  isReadOnly = true;
+  SUBJECTS.forEach(s => { state[s.id] = sharedDecoded[s.id] || []; });
   document.getElementById('readonly-banner').style.display = 'flex';
-  // Hide all input sections after pages are built
 } else {
+  // Normal mode: load from localStorage
   load();
 }
+
 buildNav();
 buildSubjectPages();
-if (sharedMode) {
-  // In readonly mode, hide all input/action controls after build
+
+if (isReadOnly) {
+  // Hide all editing controls
   SUBJECTS.forEach(s => {
-    const inputSec = document.getElementById(s.id+'-input-section');
-    const undoBtn  = document.getElementById(s.id+'-undo');
-    const resetBtns = document.querySelectorAll(`#page-${s.id} .action-btn`);
-    if (inputSec) inputSec.style.display = 'none';
-    if (undoBtn) undoBtn.style.display = 'none';
-    resetBtns.forEach(b => b.style.display = 'none');
+    const inputSec  = document.getElementById(s.id+'-input-section');
+    const undoBtn   = document.getElementById(s.id+'-undo');
+    const actionRow = document.querySelector(`#page-${s.id} .action-row`);
     const doneBanner = document.getElementById(s.id+'-done-banner');
-    if (doneBanner) { doneBanner.style.display = 'block'; doneBanner.textContent = '👁 Viewing shared scores (read-only)'; }
+    if (inputSec)   inputSec.style.display = 'none';
+    if (undoBtn)    undoBtn.style.display = 'none';
+    if (actionRow)  actionRow.style.display = 'none';
+    if (doneBanner) {
+      doneBanner.style.display = 'block';
+      doneBanner.textContent = '👁 Viewing shared scores — read only';
+    }
   });
+  // Hide share button in header (doesn't make sense in readonly mode)
+  document.querySelector('.share-btn').style.display = 'none';
 }
+
 SUBJECTS.forEach(s => renderSubjectPage(s.id));
 renderOverview();
 updateHeader();
-// Pre-generate share link in modal
-setTimeout(() => {
-  const el = document.getElementById('share-link-preview');
-  if (el) el.textContent = encodeStateToURL();
-}, 100);
+
+// Pre-fill share link in modal
+const shareLinkEl = document.getElementById('share-link-preview');
+if (shareLinkEl) shareLinkEl.textContent = encodeStateToURL();
 </script>
 </body>
 </html>
